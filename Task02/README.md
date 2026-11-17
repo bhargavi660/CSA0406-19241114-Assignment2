@@ -60,8 +60,39 @@ The program was tested with four different time quantum values.
 ### Conclusion from Testing
 
 For the given process set, quantum 20 produces the lowest average waiting time of 8.75 and average turnaround time of 15.25. However, a large quantum reduces responsiveness for newly arriving short processes. Therefore, the time quantum should be selected based on the system's response-time requirements.
+## 5. FCFS (First Come First Served) Scheduling
 
-## 5. Conclusion
+FCFS is a non-preemptive CPU scheduling algorithm in which the process that arrives first gets executed first.
+
+### Gantt Chart
+
+```text
+0        8       12        21       26
+|   P1   |  P2   |   P3    |   P4   |
+```
+
+### Calculation Results
+
+| Process | Arrival Time | Burst Time | Completion Time | Turnaround Time | Waiting Time | Response Time |
+|---|---:|---:|---:|---:|---:|---:|
+| P1 | 0 | 8 | 8 | 8 | 0 | 0 |
+| P2 | 1 | 4 | 12 | 11 | 7 | 7 |
+| P3 | 2 | 9 | 21 | 19 | 10 | 10 |
+| P4 | 3 | 5 | 26 | 23 | 18 | 18 |
+
+### Average Times
+
+- Average Turnaround Time = 15.25
+- Average Waiting Time = 8.75
+- Average Response Time = 8.75
+
+### Observation
+
+FCFS executes processes in arrival order. It is simple to implement, but shorter processes may wait for longer processes to finish. This can increase waiting time for short jobs.
+
+
+
+## 6. Conclusion
 
 The Round Robin scheduling algorithm was successfully implemented and tested with different time quantum values. The experiment demonstrates how the time quantum affects waiting time, turnaround time, and process switching.
 
