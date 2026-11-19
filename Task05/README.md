@@ -1,110 +1,33 @@
 # Task 05 – Synchronisation: Critical Sections, Semaphores and Monitors
 
 ## 1. Introduction
-This task explores synchronisation techniques used in operating systems to prevent race conditions when multiple threads access shared resources. The example is a railway ticket booking system where multiple agents book seats simultaneously.
+
+This task explores synchronisation techniques used in operating systems to prevent race conditions when multiple threads access shared resources. A railway ticket booking system is used as an example.
 
 ## 2. Critical Section Problem
+
 A critical section is a part of a program where shared data is accessed or modified.
 
 A correct solution must satisfy three requirements:
 
 - **Mutual Exclusion:** Only one process or thread can access the critical section at a time.
-- **Progress:** If no process is inside the critical section, the selection of the next process should not be delayed unnecessarily.
+- **Progress:** If no process is inside the critical section, selecting the next process should not be delayed unnecessarily.
 - **Bounded Waiting:** Every waiting process must get a chance to enter the critical section within a limited number of turns.
 
 ## 3. Peterson's Solution
-Peterson's solution is a software-based synchronisation method for two processes.
+
+Peterson's solution is a software-based synchronisation method for two processes or threads.
 
 It uses:
-- `flag[2]` to indicate whether a process wants to enter the critical section.
-- `turn` to decide which process gets priority.
+- `flag[2]` to indicate whether a thread wants to enter the critical section.
+- `turn` to decide which thread gets priority.
 
-It satisfies mutual exclusion, progress and bounded waiting under its assumptions. However, modern processors and compilers may reorder memory operations, so the original implementation is not reliably safe without suitable memory-ordering guarantees.
+The implementation uses C11 atomic variables to coordinate two threads and protect a shared counter.
 
-## 4. Semaphores
-A semaphore is a synchronisation variable used to control access
- shared resources.
-
-- **Binary Semaphore:** Has values 0 and 1. It can be used to protect a critical section.
-- **Counting Semaphore:** Maintains a count of available instances of a resource.
-
-Main operations:
-- `wait()` decreases the semaphore value or blocks the thread if the resource is unavailable.
-- `signal()` increases the semaphore value and may wake a waiting thread.
-
-## 5. Classical Synchronisation Problems
-
-### Producer–Consumer
-The producer adds items to a shared buffer, and the consumer removes them. Semaphores named `empty` and `full` track available and occupied slots. A mutex protects the buffer.
-
-### Readers–Writers
-Multiple readers can access shared data simultaneously, but a writer requires exclusive access. Locks and semaphores coordinate access.
-
-### Dining Philosophers
-Each philosopher needs two shared forks to eat. Semaphore-based solutions must prevent deadlock and starvation.
-
-## 6. Monitors
-A monitor is a high-level synchronisation construct that combines shared data and operations in one protected unit.
-
-Condition variables allow threads to wait until a required condition becomes true and signal other waiting threads. Monitors make synchronisation easier to organise and maintain.
-
-## 7. Bounded-Buffer Implementation
-The C program uses:
-- A buffer of size 5.
-- A producer and a consumer thread.
-- An `empty` semaphore to track free slots.
-- A `full` semaphore to track available items.
-- A mutex to protect shared buffer access.
-
-**Output:**
-```text
-items consumed: 20, sum = 210 (expected 210)
+**Compilation:**
+```bash
+gcc -std=c11 -Wall -Wextra peterson.c -o peterson -pthread
 ```
-
-## 8. Testing and Performance Evaluation
-
-### Peterson's Solution Test
-
-```text
-Final counter: 200000
-Expected counter: 200000
-```
-
-### Locking Performance Benchmark
-
-The benchmark was executed using 8 threads, with 100,000 booking attempts per thread.
-
-| Locking Strategy | Execution Time (seconds) | Attempts/second |
-|---|---:|---:|
-| Global Lock | 0.0974 | 8,214,002 |
-| Per-Train Lock | 0.0518 | 15,429,494 |
-| Per-Coach Lock | 0.0321 | 24,886,516 |
-
-### Performance Analysis
-- Global locking had the longest execution time because all threads shared one lock.
-- Per-train locking improved performance by allowing operations on different trains to proceed independently.
-- Per-coach locking achieved the shortest execution time and highest throughput in this test.
-
-**Result:** Per-coach locking performed best in this benchmark.
-
-## 9. Conclusion
-The bounded-buffer program and Peterson's solution compiled and executed successfully. The benchmark demonstrated that finer-grained locking can improve concurrency and performance. Synchronisation techniques help prevent race conditions and protect shared resources.
-## 10. Program Testing Results
-
-### Bounded-Buffer Test
-
-Compiled and executed `bounded_buffer.c` using GCC and pthreads.
-
-**Output:**
-```text
-items consumed: 20, sum = 210 (expected 210)
-```
-
-The consumer successfully consumed all 20 items, and the calculated sum matched the expected value.
-
-### Peterson's Solution Test
-
-Compiled and executed `peterson.c` using two threads.
 
 **Output:**
 ```text
@@ -112,26 +35,55 @@ Final counter: 200000
 Expected counter: 200000
 ```
 
-The final counter matched the expected value.
+## 4. Semaphores and Bounded Buffer
 
-### Locking Performance Benchmark
+A semaphore is a synchronisation variable used to control access to shared resources.
 
-The benchmark was executed using 8 threads, with 100,000 booking attempts per thread.
+The bounded-buffer problem involves producers adding items to a fixed-size buffer and consumers removing them. Synchronisation prevents incorrect access to the shared buffer.
 
-| Locking Strategy | Execution Time (seconds) | Attempts/second |
-|---|---:|---:|
-| Global Lock | 0.0974 | 8,214,002 |
-| Per-Train Lock | 0.0518 | 15,429,494 |
-| Per-Coach Lock | 0.0321 | 24,886,516 |
+**Compilation:**
+```bash
+gcc -std=c11 -Wall -Wextra bounded_buffer.c -o bounded_buffer -pthread
+```
 
-### Performance Analysis
+**Output:**
+```text
+items consumed: 20, sum = 210 (expected 210)
+```
 
-- Global locking had the longest execution time because all threads shared one lock.
-- Per-train locking improved performance by allowing operations on different trains to proceed independently.
-- Per-coach locking achieved the shortest execution time and highest throughput in this test.
+## 5. Locking Strategies and Performance Benchmark
 
-**Conclusion:** Per-coach locking performed best in this benchmark because it allowed greater concurrency while protecting individual coaches.
+The railway ticket booking benchmark compares three mutex locking strategies:
 
-## 11. Overall Conclusion
+- **Global Lock:** One mutex protects the entire seat array.
+- **Per-Train Lock:** Each train has a separate mutex.
+- **Per-Coach Lock:** Each coach has a separate mutex, allowing more independent operations.
 
-The bounded-buffer program, Peterson's solution and railway locking benchmark compiled and executed successfully. The results demonstrate the importance of synchronisation for protecting shared resources and improving concurrent program performance.
+The benchmark uses 8 threads, with 100,000 booking attempts per thread.
+
+**Compilation:**
+```bash
+gcc -std=c11 -Wall -Wextra locking_benchmark.c -o locking_benchmark -pthread
+```
+
+**Measured Output:**
+```text
+Railway Ticket Booking Locking Benchmark
+Threads: 8, booking attempts per thread: 100000
+
+Global Lock: 0.0825 seconds, 9697008 booking attempts/second
+Per-Train Lock: 0.0748 seconds, 10700448 booking attempts/second
+Per-Coach Lock: 0.0608 seconds, 13165627 booking attempts/second
+```
+
+The per-coach locking strategy achieved the highest throughput in this particular run because it allows threads working on different coaches to operate with less lock contention.
+
+## 6. Result
+
+Peterson's solution and the bounded-buffer program executed successfully. The locking benchmark demonstrated the performance differences between global, per-train and per-coach locking strategies.
+
+The results show that finer-grained locking can improve concurrency and throughput for this railway booking simulation.
+
+## 7. Conclusion
+
+This task demonstrates critical sections, Peterson's solution, bounded-buffer synchronisation and mutex locking strategies. These techniques help protect shared resources and improve concurrent program execution.
