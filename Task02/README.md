@@ -27,21 +27,25 @@ A Round Robin scheduling program was implemented using C.
 | P3 | 2 | 9 |
 | P4 | 3 | 5 |
 
-The program was compiled and executed using GCC in Ubuntu Linux.
+The program uses a ready queue to allocate CPU time to each process in turns.
 
 **Compilation Command:**
+
 ```bash
-gcc round_robin.c -o round_robin
+gcc -Wall -Wextra round_robin.c -o round_robin
 ```
 
 **Execution Command:**
+
 ```bash
 ./round_robin
 ```
 
+The current source code uses a time quantum of 20.
+
 ## 4. Performance Evaluation
 
-The program was tested with four different time quantum values.
+Round Robin performance was evaluated using four different time quantum values.
 
 | Time Quantum | Average Turnaround Time | Average Waiting Time |
 |---:|---:|---:|
@@ -54,12 +58,13 @@ The program was tested with four different time quantum values.
 
 - Quantum 1 provides frequent CPU switching between processes.
 - Quantum 3 gives balanced execution among processes.
-- Quantum 5 provides a lower average waiting time than quantum 1 and 3.
+- Quantum 5 produces lower average waiting time than quantum 1 and 3.
 - Quantum 20 behaves similarly to FCFS because the quantum is large enough for each process to finish in one turn.
 
 ### Conclusion from Testing
 
-For the given process set, quantum 20 produces the lowest average waiting time of 8.75 and average turnaround time of 15.25. However, a large quantum reduces responsiveness for newly arriving short processes. Therefore, the time quantum should be selected based on the system's response-time requirements.
+For the given process set, quantum 20 produces the lowest average waiting time of 8.75 and average turnaround time of 15.25. However, a large quantum can reduce responsiveness for newly arriving short processes. Therefore, the time quantum should be selected based on system response-time requirements.
+
 ## 5. FCFS (First Come First Served) Scheduling
 
 FCFS is a non-preemptive CPU scheduling algorithm in which the process that arrives first gets executed first.
@@ -90,7 +95,6 @@ FCFS is a non-preemptive CPU scheduling algorithm in which the process that arri
 
 FCFS executes processes in arrival order. It is simple to implement, but shorter processes may wait for longer processes to finish. This can increase waiting time for short jobs.
 
-
 ## 6. SJF (Shortest Job First) Scheduling
 
 SJF is a non-preemptive CPU scheduling algorithm. The process with the shortest burst time among the available processes is executed first.
@@ -119,7 +123,7 @@ SJF is a non-preemptive CPU scheduling algorithm. The process with the shortest 
 
 ### Observation
 
-SJF gives preference to shorter processes, reducing the average waiting time compared with FCFS. However, longer processes may wait for
+SJF gives preference to shorter processes, reducing the average waiting time compared with FCFS. However, longer processes may wait for a long time when shorter processes are continuously available.
 
 ## 7. SRTF (Shortest Remaining Time First) Scheduling
 
@@ -150,6 +154,7 @@ SRTF is a preemptive CPU scheduling algorithm. The process with the shortest rem
 ### Observation
 
 SRTF can reduce waiting time for short processes by allowing preemption. However, frequent process switching can increase context-switching overhead, and long processes may experience starvation.
+
 ## 8. Priority Scheduling
 
 Priority Scheduling is a CPU scheduling algorithm in which the process with the highest priority is executed first. In this example, lower priority numbers indicate higher priority. The priority values are assumed because they are not specified in the assignment.
@@ -162,6 +167,8 @@ Priority Scheduling is a CPU scheduling algorithm in which the process with the 
 | P2 | 1 | 4 | 1 |
 | P3 | 2 | 9 | 4 |
 | P4 | 3 | 5 | 3 |
+
+This example uses non-preemptive Priority Scheduling.
 
 ### Gantt Chart
 
@@ -187,7 +194,7 @@ Priority Scheduling is a CPU scheduling algorithm in which the process with the 
 
 ### Observation
 
-Priority Scheduling executes higher-priority processes before lower-priority processes. It is useful when some jobs are more important than others. However, low-priority processes may experience starvation if high-priority jobs keep arriving.
+Priority Scheduling executes higher-priority processes before lower-priority processes when they are available. It is useful when some jobs are more important than others. However, low-priority processes may experience starvation if high-priority jobs keep arriving.
 
 ## 9. Starvation, Ageing and MLFQ
 
@@ -221,6 +228,7 @@ MLFQ is a CPU scheduling algorithm that uses multiple queues with different prio
 ### Observation
 
 MLFQ is suitable for systems that handle both short and long jobs because it balances responsiveness and CPU utilization. However, choosing the correct queue levels and time quantum requires careful configuration.
+
 ## 10. Comparison and Final Recommendation
 
 ### Scheduling Algorithm Comparison
@@ -235,10 +243,23 @@ MLFQ is suitable for systems that handle both short and long jobs because it bal
 
 ### Effect of Round Robin Time Quantum
 
-The following results were obtained by testing different
+Different time quantum values produce different scheduling results. A small quantum improves opportunities for processes to receive CPU time but can increase context switching. A large quantum reduces switching but makes Round Robin behave more like FCFS.
 
-## 10. Conclusion
+For the given process set, quantum 20 gives the lowest average waiting and turnaround times among the tested values. However, the best quantum depends on the workload and response-time requirements.
 
-The Round Robin scheduling algorithm was successfully implemented and tested with different time quantum values. The experiment demonstrates how the time quantum affects waiting time, turnaround time, and process switching.
+### Final Recommendation
 
-Further analysis of FCFS, SJF, SRTF, Priority Scheduling, starvation, ageing, and Multilevel Feedback Queue (MLFQ) is included in this task.
+- FCFS is suitable for simple systems.
+- SJF is useful when shorter jobs should finish earlier.
+- SRTF provides better average waiting time for the given process set.
+- Priority Scheduling is useful for important tasks.
+- Round Robin is suitable for time-sharing systems.
+- MLFQ is useful when workloads contain different types of processes.
+
+## 11. Conclusion
+
+The Round Robin scheduling algorithm was implemented in C and tested using different time quantum values. The experiment demonstrates how the time quantum affects waiting time, turnaround time, and process switching.
+
+Further analysis of FCFS, SJF, SRTF, Priority Scheduling, starvation, ageing, and Multilevel Feedback Queue (MLFQ) was also completed.
+
+The comparison shows that different scheduling algorithms have different advantages and limitations. Selecting an appropriate algorithm depends on the system's workload, fairness, and response-time requirements.
