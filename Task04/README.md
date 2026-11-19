@@ -38,8 +38,10 @@ The following measurements were obtained by running the benchmark program.
 
 | Transfer Size | Pipe Time (seconds) | Shared Memory Time (seconds) |
 |---|---:|---:|
-| 1 MB | 0.001720 | 0.000924 |
-| 10 MB | 0.018211 | 0.009122 |
-| 100 MB | 0.079112 | 0.075020 |
+| 1 MB | 0.003856 | 0.001357 |
+| 10 MB | 0.082827 | 0.008844 |
+| 100 MB | 0.190944 | 0.102151 |
 
-## 
+## 6. Result
+
+Pipe and shared memory communication were successfully implemented and tested. The benchmark showed that shared memory took less time than the pipe implementation for all three tested transfer sizes in this run.
